@@ -1,0 +1,2189 @@
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[         0,          0]
+NotebookDataLength[     84405,       2188]
+NotebookOptionsPosition[     80530,       2071]
+NotebookOutlinePosition[     81065,       2091]
+CellTagsIndexPosition[     81022,       2088]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Support Vector Machines ", "Title",
+ CellChangeTimes->{{3.5436676228604937`*^9, 3.5436676363825817`*^9}, {
+  3.544897381709528*^9, 3.5448973875950193`*^9}}],
+
+Cell["\<\
+Demonstrace funkce a pou\[ZHacek]it\[IAcute] SVM klasifik\[AAcute]toru\
+\>", "Subtitle",
+ CellChangeTimes->{{3.543667640575199*^9, 3.543667642200035*^9}, {
+  3.5464274692468367`*^9, 3.546427479012259*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["P\[RHacek]\[IAcute]prava prost\[RHacek]ed\[IAcute]", "Section",
+ CellChangeTimes->{{3.546440152121821*^9, 3.5464401609938793`*^9}}],
+
+Cell["\<\
+Nejprve na\[CHacek]teme v\[SHacek]echny pot\[RHacek]ebn\[EAcute] knihovny.\
+\>", "Text",
+ CellChangeTimes->{{3.546439126279229*^9, 3.54643915079475*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"SetDirectory", "[", 
+   RowBox[{"NotebookDirectory", "[", "]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Quiet", "[", 
+   RowBox[{"<<", "MathSVM`"}], "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Needs", "[", "\"\<VectorAnalysis`\>\"", "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.543675054699823*^9, 3.543675064833311*^9}, {
+  3.543675922752283*^9, 3.543675930033881*^9}, {3.543678083141732*^9, 
+  3.543678088241193*^9}, {3.543680095205223*^9, 3.543680098095798*^9}, {
+  3.546357180728202*^9, 3.5463571878960543`*^9}, {3.546373271548612*^9, 
+  3.546373276239609*^9}}],
+
+Cell["\<\
+A inicializujeme funkce, kter\[EAcute] jsou d\[AAcute]le \
+pou\[ZHacek]\[IAcute]v\[AAcute]ny.\
+\>", "Text",
+ CellChangeTimes->{{3.5464391852417994`*^9, 3.546439216462862*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SVMPlotMy", "[", 
+    RowBox[{"\[Alpha]_", ",", 
+     RowBox[{"X_", "?", "MatrixQ"}], ",", "y_", ",", "opts___"}], "]"}], ":=", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "x1range", ",", "x2range", ",", "sv", ",", "df", ",", "x1", ",", "x2", 
+       ",", "K"}], "}"}], ",", 
+     RowBox[{
+      RowBox[{"K", "=", 
+       RowBox[{
+        RowBox[{"KernelFunction", "/.", 
+         RowBox[{"{", "opts", "}"}]}], "/.", 
+        RowBox[{"Options", "[", "SVMPlot", "]"}]}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"x1range", "=", 
+       RowBox[{"{", 
+        RowBox[{"x1", ",", 
+         RowBox[{"Min", "[", 
+          RowBox[{"X", "[", 
+           RowBox[{"[", 
+            RowBox[{"All", ",", "1"}], "]"}], "]"}], "]"}], ",", 
+         RowBox[{"Max", "[", 
+          RowBox[{"X", "[", 
+           RowBox[{"[", 
+            RowBox[{"All", ",", "1"}], "]"}], "]"}], "]"}]}], "}"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"x2range", "=", 
+       RowBox[{"{", 
+        RowBox[{"x2", ",", 
+         RowBox[{"Min", "[", 
+          RowBox[{"X", "[", 
+           RowBox[{"[", 
+            RowBox[{"All", ",", "2"}], "]"}], "]"}], "]"}], ",", 
+         RowBox[{"Max", "[", 
+          RowBox[{"X", "[", 
+           RowBox[{"[", 
+            RowBox[{"All", ",", "2"}], "]"}], "]"}], "]"}]}], "}"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"sv", "=", 
+       RowBox[{"SupportVectors", "[", 
+        RowBox[{"\[Alpha]", ",", "y"}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"df", "=", 
+       RowBox[{
+        RowBox[{"Total", "[", 
+         RowBox[{"\[Alpha]", "*", "y", "*", 
+          RowBox[{"Map", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"K", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"x1", ",", "x2"}], "}"}], ",", "#"}], "]"}], "&"}], 
+            ",", "X"}], "]"}]}], "]"}], "+", 
+        RowBox[{"Bias", "[", 
+         RowBox[{"\[Alpha]", ",", "X", ",", "y", ",", "opts"}], "]"}]}]}], 
+      ";", "\[IndentingNewLine]", 
+      RowBox[{"Show", "[", 
+       RowBox[{
+        RowBox[{"ListPlot", "[", 
+         RowBox[{
+          RowBox[{"X", "[", 
+           RowBox[{"[", 
+            RowBox[{"Flatten", "[", "sv", "]"}], "]"}], "]"}], ",", 
+          RowBox[{"PlotStyle", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"Hue", "[", "0.6", "]"}], ",", 
+             RowBox[{"PointSize", "[", "0.020", "]"}]}], "}"}]}]}], "]"}], 
+        ",", 
+        RowBox[{"ListPlot", "[", 
+         RowBox[{
+          RowBox[{"Extract", "[", 
+           RowBox[{"X", ",", 
+            RowBox[{"Position", "[", 
+             RowBox[{"y", ",", "1"}], "]"}]}], "]"}], ",", 
+          RowBox[{"PlotStyle", "->", 
+           RowBox[{"{", "Red", "}"}]}]}], "]"}], ",", 
+        RowBox[{"ListPlot", "[", 
+         RowBox[{
+          RowBox[{"Extract", "[", 
+           RowBox[{"X", ",", 
+            RowBox[{"Position", "[", 
+             RowBox[{"y", ",", 
+              RowBox[{"-", "1"}]}], "]"}]}], "]"}], ",", 
+          RowBox[{"PlotStyle", "\[Rule]", 
+           RowBox[{"{", "Green", "}"}]}]}], "]"}], ",", 
+        RowBox[{"ImplicitPlot", "[", 
+         RowBox[{
+          RowBox[{"df", "\[Equal]", "0"}], ",", "x1range", ",", "x2range", 
+          ",", 
+          RowBox[{"PlotStyle", "\[Rule]", 
+           RowBox[{"{", "Thick", "}"}]}]}], "]"}], ",", 
+        RowBox[{"ImplicitPlot", "[", 
+         RowBox[{
+          RowBox[{"df", "\[Equal]", "1"}], ",", "x1range", ",", "x2range", 
+          ",", 
+          RowBox[{"PlotStyle", "\[Rule]", 
+           RowBox[{"Dashing", "[", 
+            RowBox[{"{", 
+             RowBox[{".01", ",", ".01"}], "}"}], "]"}]}]}], "]"}], ",", 
+        RowBox[{"ImplicitPlot", "[", 
+         RowBox[{
+          RowBox[{"df", "\[Equal]", 
+           RowBox[{"-", "1"}]}], ",", "x1range", ",", "x2range", ",", 
+          RowBox[{"PlotStyle", "\[Rule]", 
+           RowBox[{"Dashing", "[", 
+            RowBox[{"{", 
+             RowBox[{".01", ",", ".01"}], "}"}], "]"}]}]}], "]"}], ",", 
+        RowBox[{"PlotRange", "\[Rule]", "All"}]}], 
+       RowBox[{"(*", 
+        RowBox[{",", 
+         RowBox[{"RemainingOptions", "[", 
+          RowBox[{
+           RowBox[{"{", "KernelFunction", "}"}], ",", "opts"}], "]"}]}], 
+        "*)"}], "]"}]}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KernelRBF", "[", 
+    RowBox[{"x_", ",", "z_", ",", " ", "b_"}], "]"}], ":=", 
+   RowBox[{"Exp", "[", 
+    RowBox[{
+     RowBox[{"-", "b"}], " ", 
+     RowBox[{"(", 
+      RowBox[{"x", "-", "z"}], ")"}], " ", 
+     RowBox[{"(", 
+      RowBox[{"x", "-", "z"}], ")"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KernelPolynomial", "[", 
+    RowBox[{"x_", ",", "z_", ",", "c_", ",", "d_Integer"}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"c", "+", 
+      RowBox[{"x", " ", "z"}]}], ")"}], "^", "d"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.543674966023142*^9, 3.5436749928640747`*^9}, 
+   3.543675219378708*^9, 3.54367536717935*^9, {3.543675482596974*^9, 
+   3.5436754844077272`*^9}, {3.543677015921831*^9, 3.5436770831769447`*^9}, {
+   3.5436776346346893`*^9, 3.5436777538213043`*^9}, {3.5436781580577583`*^9, 
+   3.543678204064865*^9}, {3.5436786257229013`*^9, 3.543678626190954*^9}, 
+   3.5436805101515417`*^9, {3.543680804223134*^9, 3.543680804430056*^9}, {
+   3.543680884059518*^9, 3.5436808863387747`*^9}, {3.544878981476243*^9, 
+   3.5448790629467077`*^9}, {3.5463546592475243`*^9, 3.546354675764206*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Pou\[ZHacek]it\[IAcute] SVM na jednoduch\[YAcute]ch datech\
+\>", "Section",
+ CellChangeTimes->{{3.546439311469438*^9, 3.546439320083727*^9}}],
+
+Cell["\<\
+Vygenerujeme jednoduch\[AAcute] data, kter\[AAcute] budeme pomoc\[IAcute] SVM \
+klasifikovat.\
+\>", "Text",
+ CellChangeTimes->{{3.546439333299815*^9, 3.5464393554620132`*^9}, {
+  3.546440186886922*^9, 3.5464401907116756`*^9}, {3.546448000617547*^9, 
+  3.546448002282073*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"points", "=", "20"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"x", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{
+     RowBox[{"RandomReal", "[", 
+      RowBox[{
+       RowBox[{"NormalDistribution", "[", 
+        RowBox[{
+         RowBox[{"-", "2"}], ",", "1"}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"points", "/", "2"}], ",", "2"}], "}"}]}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"RandomReal", "[", 
+      RowBox[{
+       RowBox[{"NormalDistribution", "[", 
+        RowBox[{"2", ",", "1"}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"points", "/", "2"}], ",", "2"}], "}"}]}], "]"}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"y", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{
+     RowBox[{"Table", "[", 
+      RowBox[{"1", ",", 
+       RowBox[{"{", 
+        RowBox[{"points", "/", "2"}], "}"}]}], "]"}], ",", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"-", "1"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"points", "/", "2"}], "}"}]}], "]"}]}], "]"}]}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.5436676834883137`*^9, 3.543667755072508*^9}, {
+  3.5436764725877237`*^9, 3.5436765261741123`*^9}, {3.5436784801114607`*^9, 
+  3.5436784828321037`*^9}}],
+
+Cell["\<\
+Data si m\[URing]\[ZHacek]eme prohl\[EAcute]dnout v grafu.\
+\>", "Text",
+ CellChangeTimes->{{3.546439363888116*^9, 3.546439388923065*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ListPlot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Extract", "[", 
+      RowBox[{"x", ",", 
+       RowBox[{"Position", "[", 
+        RowBox[{"y", ",", "1"}], "]"}]}], "]"}], ",", 
+     RowBox[{"Extract", "[", 
+      RowBox[{"x", ",", 
+       RowBox[{"Position", "[", 
+        RowBox[{"y", ",", 
+         RowBox[{"-", "1"}]}], "]"}]}], "]"}]}], "}"}], ",", 
+   RowBox[{"PlotStyle", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"Red", ",", "Green"}], "}"}]}], ",", " ", 
+   RowBox[{"PlotRange", "\[Rule]", "All"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.543667761125177*^9, 3.5436678029373617`*^9}, {
+  3.5436764034384527`*^9, 3.543676462360197*^9}}],
+
+Cell["\<\
+Vid\[IAcute]me, \[ZHacek]e data jsou velmi jednoduch\[AAcute], obsahuj\
+\[IAcute] dv\[EHacek] t\[RHacek]\[IAcute]dy- \[CHacek]ervenou a zelenou. Na \
+prvn\[IAcute] pohled je jasn\[EAcute], \[ZHacek]e data jsou line\[AAcute]rn\
+\[EHacek] separabiln\[IAcute]. Nyn\[IAcute] na datech natr\[EAcute]nujeme SVM \
+klasifik\[AAcute]tor a zobraz\[IAcute]me si jeho v\[YAcute]stup.\
+\>", "Text",
+ CellChangeTimes->{{3.546439524741148*^9, 3.546439555249432*^9}, {
+   3.546440206407469*^9, 3.5464402679011183`*^9}, 3.5464480186067657`*^9}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"t", "=", "0.01"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"a", "=", 
+   RowBox[{"SeparableSVM", "[", 
+    RowBox[{"x", ",", "y", ",", "t"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"SVMPlotMy", "[", 
+  RowBox[{"a", ",", "x", ",", "y"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.5436678180616913`*^9, 3.543667820681541*^9}, {
+  3.543668783137475*^9, 3.543668783243845*^9}, {3.543674890944028*^9, 
+  3.5436748943384113`*^9}, {3.54368124918498*^9, 3.543681258840225*^9}, {
+  3.546439507930298*^9, 3.546439510925684*^9}}],
+
+Cell["\<\
+V grafu vid\[IAcute]me dv\[EHacek] op\[EHacek]rn\[EAcute] roviny (p\[RHacek]\
+\[IAcute]mky) zobrazen\[EAcute] \[CHacek]\[AAcute]rkovan\[EHacek], Rovina, \
+pomoc\[IAcute] kter\[EAcute] je prov\[AAcute]d\[EHacek]na klasifikace je \
+zobrazena tlustou plnou \[CHacek]\[AAcute]rou - v\[SHacek]e nad rovinou pat\
+\[RHacek]\[IAcute] do zelen\[EAcute] t\[RHacek]\[AAcute]dy, v\[SHacek]e pod n\
+\[IAcute] pat\[RHacek]\[IAcute] do \[CHacek]erven\[EAcute] \
+t\[RHacek]\[IAcute]dy. Modrou barvou jsou zv\[YAcute]razn\[EHacek]ny op\
+\[EHacek]rn\[EAcute] vektory.\
+\>", "Text",
+ CellChangeTimes->{{3.543668355414613*^9, 3.543668357845809*^9}, {
+   3.543668574304508*^9, 3.5436686031361933`*^9}, {3.5436687172182293`*^9, 
+   3.543668786084074*^9}, {3.5436689568994093`*^9, 3.543668969541956*^9}, {
+   3.543669734155388*^9, 3.543669735591612*^9}, {3.54367763929319*^9, 
+   3.5436776496913433`*^9}, 3.546439505702812*^9, {3.546439578058346*^9, 
+   3.5464396900698147`*^9}, {3.546439991586607*^9, 3.546439992340687*^9}, {
+   3.546440305267639*^9, 3.546440324944159*^9}, {3.5464480460563087`*^9, 
+   3.5464480468442173`*^9}}],
+
+Cell["\<\
+D\[AAcute]le si vygenerujeme trochu \
+slo\[ZHacek]it\[EHacek]j\[SHacek]\[IAcute] data.\
+\>", "Text",
+ CellChangeTimes->{{3.546440001814766*^9, 3.546440019502398*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"points2", "=", "50"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"xx", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{
+     RowBox[{"RandomReal", "[", 
+      RowBox[{
+       RowBox[{"NormalDistribution", "[", 
+        RowBox[{
+         RowBox[{"-", "3"}], ",", "2"}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"points2", "/", "2"}], ",", "2"}], "}"}]}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"RandomReal", "[", 
+      RowBox[{
+       RowBox[{"NormalDistribution", "[", 
+        RowBox[{"2", ",", "3"}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"points2", "/", "2"}], ",", "2"}], "}"}]}], "]"}]}], "]"}]}],
+   ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"yy", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{
+     RowBox[{"Table", "[", 
+      RowBox[{"1", ",", 
+       RowBox[{"{", 
+        RowBox[{"points2", "/", "2"}], "}"}]}], "]"}], ",", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"-", "1"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"points2", "/", "2"}], "}"}]}], "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Extract", "[", 
+      RowBox[{"xx", ",", 
+       RowBox[{"Position", "[", 
+        RowBox[{"yy", ",", "1"}], "]"}]}], "]"}], ",", 
+     RowBox[{"Extract", "[", 
+      RowBox[{"xx", ",", 
+       RowBox[{"Position", "[", 
+        RowBox[{"yy", ",", 
+         RowBox[{"-", "1"}]}], "]"}]}], "]"}]}], "}"}], ",", 
+   RowBox[{"PlotStyle", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"Red", ",", "Green"}], "}"}]}], ",", " ", 
+   RowBox[{"PlotRange", "\[Rule]", "All"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.543674578962387*^9, 3.543674607742264*^9}, {
+  3.5436746697217827`*^9, 3.543674698605439*^9}, {3.5436747970881147`*^9, 
+  3.543674863767302*^9}, {3.543675163236961*^9, 3.543675164417057*^9}, {
+  3.543675545541902*^9, 3.543675583786805*^9}, {3.543676033313877*^9, 
+  3.543676073591502*^9}, {3.543676104921529*^9, 3.543676105650474*^9}, {
+  3.543676611243166*^9, 3.543676741902363*^9}, {3.54367864701801*^9, 
+  3.543678649939639*^9}}],
+
+Cell["\<\
+Jak je patrn\[EAcute] z grafu, tyto data ji\[ZHacek] nen\[IAcute] \
+mo\[ZHacek]n\[EAcute] line\[AAcute]rn\[EHacek] separovat. V tom p\[RHacek]\
+\[IAcute]pad\[EHacek] m\[URing]\[ZHacek]eme pokra\[CHacek]ovat dv\[EHacek]mi \
+zp\[URing]soby. Prvn\[IAcute] a nej\[CHacek]ast\[EHacek]j\[SHacek]\[IAcute] \
+zp\[URing]sob je p\[RHacek]esunout se pomoc\[IAcute] j\[AAcute]drov\[EAcute] \
+funkce do vy\[SHacek]\[SHacek]\[IAcute] dimenze, ve kter\[EAcute] u\[ZHacek] \
+budou data line\[AAcute]rn\[EHacek] separabiln\[IAcute]. Tomuto \
+zp\[URing]sobu se budeme podrobn\[EHacek] v\[EHacek]novat pozd\[EHacek]ji. \
+Druh\[AAcute] mo\[ZHacek]nost je trvat na line\[AAcute]rn\[IAcute] separaci a \
+p\[RHacek]ipustit mo\[ZHacek]nou chybu.\
+\>", "Text",
+ CellChangeTimes->{{3.546440030918314*^9, 3.546440036570901*^9}, {
+  3.546440364886725*^9, 3.546440374547036*^9}, {3.5464404702482023`*^9, 
+  3.546440609689494*^9}}],
+
+Cell["\<\
+Zobraz\[IAcute]me si v\[YAcute]stup line\[AAcute]rn\[IAcute] separace s \
+povolenou chybou.\
+\>", "Text",
+ CellChangeTimes->{{3.5464406631088943`*^9, 3.5464406824693003`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"aa", "=", 
+   RowBox[{"NonseparableSVM", "[", 
+    RowBox[{"xx", ",", "yy", ",", "0.5", ",", "0.01"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"SVMPlotMy", "[", 
+  RowBox[{"aa", ",", "xx", ",", "yy"}], "]"}]}], "Input",
+ CellChangeTimes->{
+  3.543674748666728*^9, {3.543674876898342*^9, 3.543674885530691*^9}, {
+   3.543674936289934*^9, 3.543674938078373*^9}, {3.5436756358240356`*^9, 
+   3.543675641461298*^9}, {3.5436757742847652`*^9, 3.5436757863272467`*^9}, {
+   3.54367619406063*^9, 3.5436762137338943`*^9}, {3.543676761901067*^9, 
+   3.5436767644143953`*^9}, {3.543677901690878*^9, 3.543677926131455*^9}, {
+   3.544894482624999*^9, 3.544894486587923*^9}, 3.5464406309525843`*^9}],
+
+Cell["\<\
+U SVM je mo\[ZHacek]n\[EAcute] nastavit si chybovou funkci, kter\[AAcute] ur\
+\[CHacek]\[IAcute] jak moc je pro n\[AAcute]s chyba v\[YAcute]znamn\[AAcute]. \
+Klasifik\[AAcute]tor se pot\[EAcute] sna\[ZHacek]\[IAcute] tuto chybu \
+minimalizovat. Na n\[AAcute]sleduj\[IAcute]c\[IAcute]m grafu je mo\[ZHacek]n\
+\[EAcute] odzkou\[SHacek]et, jak se bude vyv\[YAcute]jet klasifikace s m\
+\[EHacek]n\[IAcute]c\[IAcute]m se v\[YAcute]znamem chyby.\
+\>", "Text",
+ CellChangeTimes->{{3.54644068643781*^9, 3.546440805156321*^9}, {
+  3.5464409658046083`*^9, 3.5464409782224407`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"ab", "=", 
+     RowBox[{"NonseparableSVM", "[", 
+      RowBox[{"xx", ",", "yy", ",", "e", ",", "0.01"}], "]"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"SVMPlotMy", "[", 
+     RowBox[{"ab", ",", "xx", ",", "yy"}], "]"}]}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"e", ",", "0.5", ",", "\"\<V\[YAcute]znam chyby\>\""}], "}"}], 
+     ",", "0.001", ",", "2"}], "}"}], ",", 
+   RowBox[{"ContinuousAction", "\[Rule]", "False"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.54429184915305*^9, 3.544291879097951*^9}, {
+  3.544894097589982*^9, 3.5448941616977*^9}, {3.5448942152132397`*^9, 
+  3.544894231451038*^9}, {3.5448942882585783`*^9, 3.544894358118709*^9}, {
+  3.5448944462663116`*^9, 3.5448944495617523`*^9}, {3.546440401734189*^9, 
+  3.546440424166112*^9}, {3.54644074711664*^9, 3.5464407500808563`*^9}, {
+  3.5464408138420067`*^9, 3.546440813948008*^9}, {3.5464408624511843`*^9, 
+  3.546440863232774*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["J\[AAcute]drov\[EAcute] funkce", "Section",
+ CellChangeTimes->{{3.546440130853044*^9, 3.5464401337913513`*^9}}],
+
+Cell["\<\
+J\[AAcute]drov\[EAcute] funkce jsou z\[AAcute]kladmn\[IAcute]m triken, pomoc\
+\[IAcute] kter\[EAcute]ho se SVM p\[RHacek]esouv\[AAcute] do vy\[SHacek]\
+\[SHacek]\[IAcute]ch dimenz\[IAcute]. (Opakovan\[YAcute]m) Aplikov\[AAcute]n\
+\[IAcute]m t\[EHacek]chto funkc\[IAcute] na data se provede jejich \
+transformae do vy\[SHacek]\[SHacek]\[IAcute]ch dimenz\[IAcute], kde je ji\
+\[ZHacek] mo\[ZHacek]n\[EAcute] data line\[AAcute]rn\[EHacek] separovat \
+nadrovinou.\
+\>", "Text",
+ CellChangeTimes->{{3.5464411648204117`*^9, 3.5464412126573267`*^9}, {
+  3.546441284060812*^9, 3.546441322783083*^9}, {3.5464413928638477`*^9, 
+  3.546441484009066*^9}, {3.546448153293264*^9, 3.546448164272232*^9}}],
+
+Cell["\<\
+Nej\[CHacek]ast\[EHacek]ji se jako j\[AAcute]drov\[EAcute] funkce \
+pou\[ZHacek]\[IAcute]vaj\[IAcute] n\[AAcute]sleduj\[IAcute]c\[IAcute] dv\
+\[EHacek].\
+\>", "Text",
+ CellChangeTimes->{{3.54644149355807*^9, 3.546441513835128*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[StyleBox["Polynomial kernel", "Subsection"]], "Section",
+ CellChangeTimes->{{3.544880655936039*^9, 3.5448806595902767`*^9}}],
+
+Cell[TextData[{
+ "Polynomi\[AAcute]ln\[IAcute] kernel je j\[AAcute]drov\[AAcute] funkce s n\
+\[AAcute]sleduj\[IAcute]c\[IAcute]m p\[RHacek]edpisem ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"k", "(", 
+    RowBox[{
+     SubscriptBox["x", "1"], ",", 
+     SubscriptBox["x", "2"]}]}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ ") ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"=", " ", 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        SubscriptBox["x", "1"], "*", 
+        SubscriptBox["x", "2"]}], " ", "+", "1"}], ")"}], "d"]}], 
+   TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ ". P\[RHacek]i jej\[IAcute]m pou\[ZHacek]it\[IAcute] je t\[RHacek]eba vhodn\
+\[EHacek] nastavit stupe",
+ "\[NHacek] polynomu - parametr d. "
+}], "Text",
+ CellChangeTimes->{{3.54644162578957*^9, 3.546441641181622*^9}, {
+  3.546441679375493*^9, 3.546441706084014*^9}, {3.546441747093423*^9, 
+  3.546441775573457*^9}, {3.546441810903314*^9, 3.5464418700108433`*^9}, {
+  3.546441901310398*^9, 3.5464419502630177`*^9}, {3.546441987899955*^9, 
+  3.5464419889954653`*^9}, {3.546442035501338*^9, 3.5464421885901318`*^9}, {
+  3.546442221105756*^9, 3.5464422339039288`*^9}}],
+
+Cell["\<\
+Jak polynomi\[AAcute]ln\[IAcute] kernel vypad\[AAcute] v z\[AAcute]vislosti \
+na jeho stupni je mo\[ZHacek]n\[EAcute] si prohl\[EAcute]dnout na \
+n\[AAcute]sleduj\[IAcute]c\[IAcute]m grafu.\
+\>", "Text",
+ CellChangeTimes->{{3.546442274238132*^9, 3.546442312371312*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{"Plot3D", "[", 
+    RowBox[{
+     RowBox[{"KernelPolynomial", "[", 
+      RowBox[{"x", ",", "z", ",", "1", ",", "d"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", 
+       RowBox[{"-", "4"}], ",", "4"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"z", ",", 
+       RowBox[{"-", "4"}], ",", "4"}], "}"}], ",", 
+     RowBox[{"ViewPoint", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "7.654"}], ",", 
+        RowBox[{"-", "1.091"}], ",", "4.608"}], "}"}]}], ",", 
+     RowBox[{"PlotPoints", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"30", ",", "30"}], "}"}]}]}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"d", ",", "1", ",", "\"\<Stupen polynomu\>\""}], "}"}], ",", 
+     "1", ",", "20", ",", "1"}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.543679833322397*^9, 3.5436799369643087`*^9}, {
+   3.5448819936008043`*^9, 3.5448819948128977`*^9}, {3.5463293405261803`*^9, 
+   3.546329341281674*^9}, 3.546354668382745*^9, {3.5463595022556677`*^9, 
+   3.546359650917551*^9}, {3.546424617638069*^9, 3.54642468878092*^9}, {
+   3.546424727082713*^9, 3.5464247742604237`*^9}, 3.546441120136589*^9}],
+
+Cell["\<\
+Nyn\[IAcute] nech\[AAcute]me SVM, aby si transformovalo data do vy\[SHacek]\
+\[SHacek]\[IAcute] dimenze pomoc\[IAcute] polynomi\[AAcute]ln\[IAcute]ho \
+kernelu a n\[AAcute]sledn\[EHacek] provedlo klasifikaci. Ke klasifikaci pou\
+\[ZHacek]ijeme stejn\[AAcute] data jako v p\[RHacek]\[IAcute]pad\[EHacek] \
+klasifikace s chybovou funkc\[IAcute] v\[YAcute]\[SHacek]e.  Graf \
+umo\[ZHacek]nuje interaktivn\[EHacek] nastavovat stupen polynomu.\
+\>", "Text",
+ CellChangeTimes->{{3.546442357705209*^9, 3.546442367555863*^9}, {
+  3.546442426914287*^9, 3.546442461261297*^9}, {3.546442689432658*^9, 
+  3.546442689691647*^9}, {3.546442754486318*^9, 3.54644280085646*^9}, {
+  3.546443513358667*^9, 3.546443578545596*^9}, {3.546448232033106*^9, 
+  3.546448234575492*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"pk", "=", 
+     RowBox[{
+      RowBox[{"PolynomialKernel", "[", 
+       RowBox[{"#1", ",", "#2", ",", "t"}], "]"}], "&"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"aab", "=", 
+     RowBox[{"NonseparableSVM", "[", 
+      RowBox[{"xx", ",", "yy", ",", "0.5", ",", "0.01", ",", " ", 
+       RowBox[{"KernelFunction", "\[Rule]", "pk"}]}], "]"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"SVMPlotMy", "[", 
+     RowBox[{"aab", ",", "xx", ",", "yy", ",", 
+      RowBox[{"KernelFunction", "->", "pk"}]}], "]"}]}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"t", ",", "1", ",", "\"\<Stupen polynomu\>\""}], "}"}], ",", 
+     "1", ",", "10", ",", "1"}], "}"}], ",", 
+   RowBox[{"ContinuousAction", "\[Rule]", "False"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.543674722248509*^9, 3.543674723091071*^9}, {
+   3.5436762385218267`*^9, 3.543676280413169*^9}, {3.543676822642058*^9, 
+   3.543676824136118*^9}, {3.543676937729788*^9, 3.543676959826573*^9}, {
+   3.5436772977623043`*^9, 3.543677409274658*^9}, {3.543678339354382*^9, 
+   3.543678339502598*^9}, {3.5436783818809547`*^9, 3.543678384108341*^9}, {
+   3.5436809563159943`*^9, 3.543680969289826*^9}, {3.5436810234740477`*^9, 
+   3.543681029637339*^9}, {3.544291814347192*^9, 3.544291835105723*^9}, {
+   3.544291876885552*^9, 3.544291899626851*^9}, {3.544291954878697*^9, 
+   3.544291983977559*^9}, {3.544292069764749*^9, 3.5442921020251923`*^9}, {
+   3.54429213232824*^9, 3.544292142593492*^9}, 3.5442921835735397`*^9, {
+   3.544292250108913*^9, 3.5442922502055063`*^9}, {3.544292682648802*^9, 
+   3.544292704852975*^9}, {3.544292877132793*^9, 3.5442928801043797`*^9}, {
+   3.544879810400495*^9, 3.544879854251767*^9}, {3.5448799575528708`*^9, 
+   3.544879958100111*^9}, {3.54488898504723*^9, 3.5448889868883677`*^9}, {
+   3.544897179729998*^9, 3.544897181260013*^9}, {3.5448975075476017`*^9, 
+   3.54489750803939*^9}, {3.544897706214292*^9, 3.544897707759986*^9}, {
+   3.546427653536139*^9, 3.5464276618512287`*^9}}],
+
+Cell["\<\
+Z graf\[URing] je patrn\[EAcute], \[ZHacek]e p\[RHacek]i pou\[ZHacek]it\
+\[IAcute] n\[IAcute]zk\[EAcute]ho stupn\[EHacek] polynomu se SVM model nedou\
+\[CHacek]uje, naopak p\[RHacek]i pou\[ZHacek]it\[IAcute] vysok\[EAcute]ho \
+stupn\[EHacek] je model p\[RHacek]eu\[CHacek]en\[YAcute]. Vhodn\[AAcute] \
+hodnota stupn\[EHacek] polynomu se hled\[AAcute] experiment\[AAcute]ln\
+\[EHacek], nej\[CHacek]ast\[EHacek]ji k\[RHacek]\[IAcute]\[ZHacek]ovou \
+validac\[IAcute].\
+\>", "Text",
+ CellChangeTimes->{{3.546442556921302*^9, 3.5464426348249187`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[StyleBox["RBF kernel", "Subsection"]], "Section",
+ CellChangeTimes->{{3.544897756936181*^9, 3.544897761609672*^9}}],
+
+Cell[TextData[{
+ "RBF kernel druh\[AAcute] \[CHacek]asto pou\[ZHacek]\[IAcute]van\[AAcute] j\
+\[AAcute]drov\[AAcute] funkce. Jej\[IAcute] p\[RHacek]edpis je \
+n\[AAcute]sleduj\[IAcute]c\[IAcute] ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{"k", "(", 
+     RowBox[{
+      SubscriptBox["x", "1"], ",", 
+      SubscriptBox["x", "2"]}], ")"}], 
+    SuperscriptBox["e", 
+     RowBox[{"-", 
+      SuperscriptBox[
+       RowBox[{"t", "(", 
+        RowBox[{
+         SubscriptBox["x", "1"], "-", 
+         SubscriptBox["x", "2"]}], ")"}], "2"]}]]}], TraditionalForm]]],
+ " P\[RHacek]i pou\[ZHacek]it\[IAcute] je pot\[RHacek]eba vhodn\[EHacek] \
+nastavit parametr t."
+}], "Text",
+ CellChangeTimes->{{3.5464428504457417`*^9, 3.546442878606484*^9}, {
+  3.5464429169252663`*^9, 3.5464429824918127`*^9}, {3.546443037824892*^9, 
+  3.546443131565037*^9}, {3.546443161826872*^9, 3.546443171194565*^9}, {
+  3.546443281332045*^9, 3.546443318255254*^9}, {3.546448388291462*^9, 
+  3.546448392620729*^9}}],
+
+Cell["\<\
+Z\[AAcute]vislost RBF kernelu na parametru t si m\[URing]\[ZHacek]ete prohl\
+\[EAcute]dnout na n\[AAcute]sleduj\[IAcute]c\[IAcute]m grafu.\
+\>", "Text",
+ CellChangeTimes->{{3.5464433383459053`*^9, 3.546443371909225*^9}, {
+  3.5464484154902477`*^9, 3.5464484221796007`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{"Plot3D", "[", 
+    RowBox[{
+     RowBox[{"KernelRBF", "[", 
+      RowBox[{"x", ",", "z", ",", "t"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", 
+       RowBox[{"-", "10"}], ",", "10"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"z", ",", 
+       RowBox[{"-", "10"}], ",", "10"}], "}"}], ",", 
+     RowBox[{"ViewPoint", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"3.849", ",", "6.909", ",", "4.295"}], "}"}]}], ",", 
+     RowBox[{"PlotPoints", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"30", ",", "30"}], "}"}]}]}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"t", ",", "0.000001", ",", "\"\<t\>\""}], "}"}], ",", 
+     "0.000001", ",", "0.5"}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.543679749497167*^9, 3.543679783944277*^9}, {
+   3.543679814976391*^9, 3.543679822458571*^9}, {3.543680310720127*^9, 
+   3.5436803257060823`*^9}, {3.54488113695857*^9, 3.544881160449546*^9}, 
+   3.54635464475231*^9, 3.5464244111144867`*^9, {3.546424460748115*^9, 
+   3.5464244991350613`*^9}, {3.54642454470562*^9, 3.546424587586205*^9}, 
+   3.546443324802656*^9, 3.54644389622606*^9}],
+
+Cell["\<\
+Nyn\[IAcute] nau\[CHacek]\[IAcute]me SVM za pou\[ZHacek]it\[IAcute] \
+transformace dat pomoc\[IAcute] RBF kernelu. Data pou\[ZHacek]ijeme stejn\
+\[AAcute] jako v p\[RHacek]\[IAcute]pad\[EHacek] \
+polynomi\[AAcute]ln\[IAcute]ho kernelu.\
+\>", "Text",
+ CellChangeTimes->{{3.546443400772109*^9, 3.546443485932684*^9}, {
+  3.546443625060809*^9, 3.546443709276389*^9}}],
+
+Cell["\<\
+Graf umo\[ZHacek]nuje interaktivn\[EHacek] m\[EHacek]nit patametr t.\
+\>", "Text",
+ CellChangeTimes->{{3.54644371968892*^9, 3.5464437363845263`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"RBFk", "=", 
+     RowBox[{
+      RowBox[{"RBFKernel", "[", 
+       RowBox[{"#1", ",", "#2", ",", "t"}], "]"}], "&"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"aaa", "=", 
+     RowBox[{"NonseparableSVM", "[", 
+      RowBox[{"xx", ",", "yy", ",", "0.5", ",", "0.01", ",", " ", 
+       RowBox[{"KernelFunction", "\[Rule]", "RBFk"}]}], "]"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"SVMPlotMy", "[", 
+     RowBox[{"aaa", ",", "xx", ",", "yy", ",", 
+      RowBox[{"KernelFunction", "\[Rule]", "RBFk"}]}], "]"}]}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"t", ",", "0.02", ",", "\"\<t\>\""}], "}"}], ",", "0.0001", ",",
+      "3", ",", "0.01"}], "}"}], ",", 
+   RowBox[{"ContinuousAction", "\[Rule]", "False"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.544881028875222*^9, 3.5448811038192883`*^9}, {
+   3.544881206435364*^9, 3.54488121617409*^9}, {3.5448812637709017`*^9, 
+   3.5448812881334057`*^9}, {3.54488133213941*^9, 3.544881341850189*^9}, {
+   3.544881380291657*^9, 3.544881392086494*^9}, {3.544882215278817*^9, 
+   3.544882251548815*^9}, {3.544896759204615*^9, 3.544896760282424*^9}, {
+   3.546443855767166*^9, 3.546443859976221*^9}, 3.546443890378481*^9}],
+
+Cell["\<\
+Jak je z graf\[URing] v\[YAcute]\[SHacek]e vid\[EHacek]t, pro ni\[ZHacek]\
+\[SHacek]\[IAcute] hodnoty parametru t se SVM nedou\[CHacek]uje, a pro vysok\
+\[EAcute] hodnoty se siln\[EHacek] p\[RHacek]eu\[CHacek]uje. Optim\[AAcute]ln\
+\[IAcute] hodnota parametru se ur\[CHacek]uje experiment\[AAcute]ln\[EHacek], \
+nap\[RHacek]\[IAcute]klad k\[RHacek]\[IAcute]\[ZHacek]ovou validac\[IAcute].\
+\>", "Text",
+ CellChangeTimes->{{3.5464437419827957`*^9, 3.5464438390127363`*^9}, 
+   3.546448492770911*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Ilustrace p\[RHacek]echodu do vy\[SHacek]\[SHacek]\[IAcute] dimenze\
+\>", "Section",
+ CellChangeTimes->{{3.5448968762326527`*^9, 3.544896887059544*^9}, {
+  3.546444014567396*^9, 3.54644402069627*^9}}],
+
+Cell["\<\
+V t\[EAcute]to kapitole si podrobn\[EHacek]ji rozebereme transformaci dat do \
+vy\[SHacek]\[SHacek]\[IAcute] dimenze.\
+\>", "Text",
+ CellChangeTimes->{{3.546444032801354*^9, 3.546444073303464*^9}}],
+
+Cell["\<\
+Nejprve si vygenerujeme data, na kter\[YAcute]ch budeme transformaci \
+demonstrovat.\
+\>", "Text",
+ CellChangeTimes->{{3.5464440968537188`*^9, 3.5464441213301888`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"values", " ", "=", " ", "40"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"inRing", "=", 
+   RowBox[{"Join", "[", " ", 
+    RowBox[{
+     RowBox[{"Join", "[", 
+      RowBox[{
+       RowBox[{"RandomReal", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "5.5"}], ",", 
+           RowBox[{"-", "4.6"}]}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"values", "/", "4"}], ",", "1"}], "}"}]}], "]"}], ",", 
+       "\n", 
+       RowBox[{"RandomReal", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "5.6"}], ",", 
+           RowBox[{"-", "4.5"}]}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"values", "/", "4"}], ",", "1"}], "}"}]}], "]"}], ",", 
+       "2"}], "]"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"Join", "[", 
+      RowBox[{
+       RowBox[{"RandomReal", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"5.5", ",", "4.6"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"values", "/", "4"}], ",", "1"}], "}"}]}], "]"}], ",", 
+       "\n", 
+       RowBox[{"RandomReal", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"5.6", ",", "4.5"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"values", "/", "4"}], ",", "1"}], "}"}]}], "]"}], ",", 
+       "2"}], "]"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"Join", "[", 
+      RowBox[{
+       RowBox[{"RandomReal", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "5.5"}], ",", 
+           RowBox[{"-", "4.6"}]}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"values", "/", "4"}], ",", "1"}], "}"}]}], "]"}], ",", 
+       "\n", 
+       RowBox[{"RandomReal", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"5.6", ",", "4.5"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"values", "/", "4"}], ",", "1"}], "}"}]}], "]"}], ",", 
+       "2"}], "]"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"Join", "[", 
+      RowBox[{
+       RowBox[{"RandomReal", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"5.5", ",", "4.6"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"values", "/", "4"}], ",", "1"}], "}"}]}], "]"}], ",", 
+       "\n", 
+       RowBox[{"RandomReal", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "5.6"}], ",", 
+           RowBox[{"-", "4.5"}]}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"values", "/", "4"}], ",", "1"}], "}"}]}], "]"}], ",", 
+       "2"}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"inCentral", " ", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{
+     RowBox[{"RandomReal", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"-", "1.5"}], ",", "1.5"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"values", ",", "1"}], "}"}]}], "]"}], ",", "\n", 
+     RowBox[{"RandomReal", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"-", "1.5"}], ",", "1.5"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"values", ",", "1"}], "}"}]}], "]"}], ",", "2"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"inputData", " ", "=", " ", 
+   RowBox[{"Join", "[", 
+    RowBox[{"inRing", ",", "inCentral"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"inputClasses", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{
+     RowBox[{"Table", "[", 
+      RowBox[{"1", ",", 
+       RowBox[{"{", "values", "}"}]}], "]"}], ",", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"-", "1"}], ",", 
+       RowBox[{"{", "values", "}"}]}], "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Extract", "[", 
+      RowBox[{"inputData", ",", 
+       RowBox[{"Position", "[", 
+        RowBox[{"inputClasses", ",", "1"}], "]"}]}], "]"}], ",", 
+     RowBox[{"Extract", "[", 
+      RowBox[{"inputData", ",", 
+       RowBox[{"Position", "[", 
+        RowBox[{"inputClasses", ",", 
+         RowBox[{"-", "1"}]}], "]"}]}], "]"}]}], "}"}], ",", 
+   RowBox[{"PlotStyle", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"Red", ",", "Green"}], "}"}]}], ",", " ", 
+   RowBox[{"PlotRange", "\[Rule]", "All"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.546330431286497*^9, 3.546330436242985*^9}, {
+   3.546330522877337*^9, 3.5463305397020082`*^9}, {3.546330573810235*^9, 
+   3.54633070967315*^9}, {3.546330792802061*^9, 3.546330810130188*^9}, {
+   3.54633084870791*^9, 3.5463308664025087`*^9}, {3.546330909284655*^9, 
+   3.546330972136815*^9}, {3.546331383188677*^9, 3.546331388217923*^9}, {
+   3.546331423329446*^9, 3.5463314314107924`*^9}, {3.54633152765783*^9, 
+   3.5463316141810493`*^9}, {3.54633166814248*^9, 3.546331668264577*^9}, {
+   3.546331710072578*^9, 3.546331736169847*^9}, {3.546331766448802*^9, 
+   3.546331845074785*^9}, {3.546331879252379*^9, 3.546332065161111*^9}, {
+   3.546332191855369*^9, 3.5463323044217253`*^9}, {3.546332369166038*^9, 
+   3.54633239427285*^9}, {3.5463325279508333`*^9, 3.546332533525963*^9}, {
+   3.546332564554515*^9, 3.546332625037798*^9}, {3.546332655745142*^9, 
+   3.546332786184394*^9}, {3.5463330234557533`*^9, 3.546333027916514*^9}, {
+   3.546333307270795*^9, 3.546333388303371*^9}, {3.546333431465494*^9, 
+   3.546333468138685*^9}, {3.546333498344614*^9, 3.546333549700143*^9}, {
+   3.546333604896532*^9, 3.546333658254385*^9}, {3.546333932018643*^9, 
+   3.546333941929084*^9}, {3.546334008411376*^9, 3.546334009110635*^9}, 
+   3.5463543987892637`*^9, {3.546356438179668*^9, 3.5463565194170218`*^9}, {
+   3.546356577098056*^9, 3.546356588124855*^9}, {3.546358328864726*^9, 
+   3.546358332891281*^9}, {3.546358367357256*^9, 3.546358592731866*^9}, {
+   3.5463586300944567`*^9, 3.5463586742215567`*^9}, {3.546358707785224*^9, 
+   3.546358707931007*^9}, {3.546358748954323*^9, 3.546358776649585*^9}, {
+   3.546358846669594*^9, 3.546359040172723*^9}, 3.546359175438571*^9, {
+   3.546359224322905*^9, 3.5463592343907003`*^9}, {3.546359326058195*^9, 
+   3.546359354472396*^9}, {3.546359676088114*^9, 3.54635978560788*^9}, {
+   3.5463598156484833`*^9, 3.546359841564701*^9}}],
+
+Cell["\<\
+Jak je patrn\[EAcute] z grafu, data jsou line\[AAcute]rn\[EHacek] \
+neseparabiln\[IAcute]. Proto pou\[ZHacek]ijeme polynomi\[AAcute]ln\[IAcute] \
+kernel k jejich trasformaci do t\[RHacek]\[IAcute] rozm\[EHacek]r\[URing].\
+\>", "Text",
+ CellChangeTimes->{{3.546444186480652*^9, 3.546444191743545*^9}, {
+  3.546444422665865*^9, 3.546444431508659*^9}, {3.5464444861444187`*^9, 
+  3.5464445392001266`*^9}}],
+
+Cell["\<\
+Nejprve si p\[RHacek]iprav\[IAcute]me p\[RHacek]edpisy pro funkce \
+pou\[ZHacek]\[IAcute]van\[EAcute] pro samotnou transformaci.\
+\>", "Text",
+ CellChangeTimes->{{3.5464445851882887`*^9, 3.546444678478104*^9}, {
+  3.546448534725501*^9, 3.546448540429946*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"polynomDegree", " ", "=", " ", "4"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RBFparam", " ", "=", " ", "0.1"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"KRBF", "=", " ", 
+   RowBox[{
+    RowBox[{"RBFKernel", "[", 
+     RowBox[{"#1", ",", "#2", ",", "RBFparam"}], "]"}], "&"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"KPol", "=", 
+   RowBox[{
+    RowBox[{"PolynomialKernel", "[", 
+     RowBox[{"#1", ",", "#2", ",", "polynomDegree"}], "]"}], "&"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KernelPolynomialSpec", "[", "x_", "]"}], ":=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "[", 
+      RowBox[{"[", "1", "]"}], "]"}], ",", 
+     RowBox[{"x", "[", 
+      RowBox[{"[", "2", "]"}], "]"}], ",", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{
+         RowBox[{"x", "[", 
+          RowBox[{"[", "1", "]"}], "]"}], " ", 
+         RowBox[{"x", "[", 
+          RowBox[{"[", "2", "]"}], "]"}]}]}], ")"}], "^", "polynomDegree"}]}],
+     "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"KernelRBFSpec", "[", "x_", "]"}], ":=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"x", "[", 
+      RowBox[{"[", "1", "]"}], "]"}], ",", 
+     RowBox[{"x", "[", 
+      RowBox[{"[", "2", "]"}], "]"}], ",", " ", 
+     RowBox[{"Exp", "[", 
+      RowBox[{
+       RowBox[{"-", "RBFparam"}], " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"x", "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "-", 
+         RowBox[{"x", "[", 
+          RowBox[{"[", "2", "]"}], "]"}]}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"x", "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "-", 
+         RowBox[{"x", "[", 
+          RowBox[{"[", "2", "]"}], "]"}]}], ")"}]}], "]"}]}], "}"}]}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.546354553631665*^9, 3.546354556760125*^9}, {
+   3.546355258611168*^9, 3.5463553248098717`*^9}, {3.546356642860641*^9, 
+   3.546356643664394*^9}, {3.54635687156668*^9, 3.5463568719816236`*^9}, 
+   3.5463570961894817`*^9, {3.546444562484901*^9, 3.546444562731065*^9}}],
+
+Cell["\<\
+Nyn\[IAcute] m\[URing]\[ZHacek]eme prov\[EAcute]st samotnou transformaci dat.\
+\
+\>", "Text",
+ CellChangeTimes->{{3.546444692297268*^9, 3.54644472735436*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"higherDim", " ", "=", " ", 
+   RowBox[{"KernelPolynomialSpec", "/@", "inputData"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", 
+  RowBox[{
+   RowBox[{"ListPointPlot3D", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Extract", "[", 
+        RowBox[{"higherDim", ",", 
+         RowBox[{"Position", "[", 
+          RowBox[{"inputClasses", ",", "1"}], "]"}]}], "]"}], ",", 
+       RowBox[{"Extract", "[", 
+        RowBox[{"higherDim", ",", 
+         RowBox[{"Position", "[", 
+          RowBox[{"inputClasses", ",", 
+           RowBox[{"-", "1"}]}], "]"}]}], "]"}]}], "}"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"Red", ",", 
+          RowBox[{"PointSize", "[", "Medium", "]"}]}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"Green", ",", 
+          RowBox[{"PointSize", "[", "Medium", "]"}]}], "}"}]}], "}"}]}], ",", 
+     
+     RowBox[{"PlotRange", "\[Rule]", "All"}]}], "]"}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"Plot3D", "[", 
+    RowBox[{
+     RowBox[{"KernelPolynomial", "[", 
+      RowBox[{"x", ",", "z", ",", "1", ",", "polynomDegree"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", 
+       RowBox[{"-", "5.5"}], ",", "5.5"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"z", ",", 
+       RowBox[{"-", "5.5"}], ",", "5.5"}], "}"}], ",", 
+     RowBox[{"PlotPoints", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"30", ",", "30"}], "}"}]}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", "All"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"Opacity", "[", "0.3", "]"}]}], ",", 
+     RowBox[{"Mesh", "\[Rule]", "None"}]}], "]"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.546336118951997*^9, 3.546336122174211*^9}, {
+   3.546338570989418*^9, 3.546338599061956*^9}, {3.546356740695129*^9, 
+   3.5463567716582403`*^9}, {3.546356809064686*^9, 3.546356858839644*^9}, {
+   3.546356889215809*^9, 3.546356938713067*^9}, {3.5463569837488728`*^9, 
+   3.546357010488254*^9}, {3.546357072032959*^9, 3.5463570783203163`*^9}, 
+   3.546357124458061*^9, {3.5463582332505827`*^9, 3.546358237760792*^9}, 
+   3.5463603457510223`*^9, {3.546360379503148*^9, 3.546360384789817*^9}, {
+   3.546360418738093*^9, 3.546360494800696*^9}, {3.546360561632515*^9, 
+   3.5463606588209667`*^9}, {3.546360764415166*^9, 3.546360780516322*^9}, {
+   3.54636081129602*^9, 3.5463608415011797`*^9}, {3.546360877382061*^9, 
+   3.54636096159165*^9}, {3.546360996203723*^9, 3.54636107541009*^9}, 
+   3.546361112244277*^9, {3.54636114981205*^9, 3.546361277168981*^9}, {
+   3.546361382381094*^9, 3.5463614164030037`*^9}, {3.5463673967892447`*^9, 
+   3.5463674239624233`*^9}, {3.546367560150724*^9, 3.546367594676174*^9}, {
+   3.546415074088286*^9, 3.546415094762348*^9}}],
+
+Cell["\<\
+V grafu jsou vid\[EHacek]t transformovan\[AAcute] data, a tak\[EAcute] funkce \
+polynomi\[AAcute]ln\[IAcute]ho kernelu, pomoc\[IAcute] kter\[EAcute]ho byla \
+transformace provedena. Za pov\[SHacek]imnut\[IAcute] stoj\[IAcute] hodnoty \
+osy z. Vid\[IAcute]me tedy, \[ZHacek]e data jsou po transformaci ji\[ZHacek] \
+line\[AAcute]rn\[EHacek] separabiln\[IAcute] pomoc\[IAcute] roviny.\
+\>", "Text",
+ CellChangeTimes->{{3.546444794866171*^9, 3.546444816262167*^9}, {
+  3.546444894391995*^9, 3.5464449839751453`*^9}, {3.54644857024931*^9, 
+  3.5464485789431877`*^9}}],
+
+Cell["\<\
+Najeme op\[EHacek]rn\[EAcute] vektory pro roviny, kter\[EAcute] separuj\
+\[IAcute] data.\
+\>", "Text",
+ CellChangeTimes->{{3.5464450104107437`*^9, 3.546445055701146*^9}, {
+  3.546448606278492*^9, 3.546448614731134*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"vectors", "=", 
+   RowBox[{"Take", "[", 
+    RowBox[{
+     RowBox[{"Sort", "[", 
+      RowBox[{
+       RowBox[{"Join", "[", 
+        RowBox[{
+         RowBox[{"Take", "[", 
+          RowBox[{
+           RowBox[{"Sort", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Extract", "[", 
+               RowBox[{"higherDim", ",", 
+                RowBox[{"Position", "[", 
+                 RowBox[{"inputClasses", ",", "1"}], "]"}]}], "]"}], "[", 
+              RowBox[{"[", 
+               RowBox[{";;", 
+                RowBox[{"values", "/", "4"}]}], "]"}], "]"}], ",", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"#1", "[", 
+                RowBox[{"[", "3", "]"}], "]"}], "<", 
+               RowBox[{"#2", "[", 
+                RowBox[{"[", "3", "]"}], "]"}]}], "&"}]}], "]"}], ",", "1"}], 
+          "]"}], ",", 
+         RowBox[{"Take", "[", 
+          RowBox[{
+           RowBox[{"Sort", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Extract", "[", 
+               RowBox[{"higherDim", ",", 
+                RowBox[{"Position", "[", 
+                 RowBox[{"inputClasses", ",", "1"}], "]"}]}], "]"}], "[", 
+              RowBox[{"[", 
+               RowBox[{
+                RowBox[{"values", "/", "4"}], ";;", 
+                RowBox[{"values", "/", "2"}]}], "]"}], "]"}], ",", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"#1", "[", 
+                RowBox[{"[", "3", "]"}], "]"}], "<", 
+               RowBox[{"#2", "[", 
+                RowBox[{"[", "3", "]"}], "]"}]}], "&"}]}], "]"}], ",", "1"}], 
+          "]"}], ",", 
+         RowBox[{"Take", "[", 
+          RowBox[{
+           RowBox[{"Sort", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Extract", "[", 
+               RowBox[{"higherDim", ",", 
+                RowBox[{"Position", "[", 
+                 RowBox[{"inputClasses", ",", "1"}], "]"}]}], "]"}], "[", 
+              RowBox[{"[", 
+               RowBox[{
+                RowBox[{"values", "/", "2"}], ";;", 
+                RowBox[{"3", "*", 
+                 RowBox[{"values", "/", "4"}]}]}], "]"}], "]"}], ",", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"#1", "[", 
+                RowBox[{"[", "3", "]"}], "]"}], "<", 
+               RowBox[{"#2", "[", 
+                RowBox[{"[", "3", "]"}], "]"}]}], "&"}]}], "]"}], ",", "1"}], 
+          "]"}], ",", 
+         RowBox[{"Take", "[", 
+          RowBox[{
+           RowBox[{"Sort", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Extract", "[", 
+               RowBox[{"higherDim", ",", 
+                RowBox[{"Position", "[", 
+                 RowBox[{"inputClasses", ",", "1"}], "]"}]}], "]"}], "[", 
+              RowBox[{"[", 
+               RowBox[{
+                RowBox[{"3", "*", 
+                 RowBox[{"values", "/", "4"}]}], ";;", "values"}], "]"}], 
+              "]"}], ",", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"#1", "[", 
+                RowBox[{"[", "3", "]"}], "]"}], "<", 
+               RowBox[{"#2", "[", 
+                RowBox[{"[", "3", "]"}], "]"}]}], "&"}]}], "]"}], ",", "1"}], 
+          "]"}]}], "]"}], ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"#1", "[", 
+          RowBox[{"[", "3", "]"}], "]"}], "<", 
+         RowBox[{"#2", "[", 
+          RowBox[{"[", "3", "]"}], "]"}]}], "&"}]}], "]"}], ",", "3"}], 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"vectors2", "=", 
+   RowBox[{"Sort", "[", 
+    RowBox[{"Join", "[", 
+     RowBox[{"Take", "[", 
+      RowBox[{
+       RowBox[{"Sort", "[", 
+        RowBox[{
+         RowBox[{"Extract", "[", 
+          RowBox[{"higherDim", ",", 
+           RowBox[{"Position", "[", 
+            RowBox[{"inputClasses", ",", 
+             RowBox[{"-", "1"}]}], "]"}]}], "]"}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"#1", "[", 
+            RowBox[{"[", "3", "]"}], "]"}], "<", 
+           RowBox[{"#2", "[", 
+            RowBox[{"[", "3", "]"}], "]"}]}], "&"}]}], "]"}], ",", "1"}], 
+      "]"}], "]"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"v1", "=", 
+   RowBox[{
+    RowBox[{"vectors", "[", 
+     RowBox[{"[", "1", "]"}], "]"}], "-", 
+    RowBox[{"vectors", "[", 
+     RowBox[{"[", "2", "]"}], "]"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"v2", "=", 
+   RowBox[{
+    RowBox[{"vectors", "[", 
+     RowBox[{"[", "3", "]"}], "]"}], "-", 
+    RowBox[{"vectors", "[", 
+     RowBox[{"[", "2", "]"}], "]"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"normal", "=", 
+   RowBox[{"CrossProduct", "[", 
+    RowBox[{"v1", ",", "v2"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"aa", "=", 
+   RowBox[{"normal", "[", 
+    RowBox[{"[", "3", "]"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"d", "=", 
+   RowBox[{"Dot", "[", 
+    RowBox[{"normal", ",", 
+     RowBox[{"vectors", "[", 
+      RowBox[{"[", "1", "]"}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"formula", "=", 
+   RowBox[{"normal", "*", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y", ",", "1"}], "}"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"formula", " ", "=", " ", 
+   RowBox[{"Plus", "@@", "formula"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"formula", "=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"formula", "-", "d"}], ")"}], "/", 
+    RowBox[{"-", "aa"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"dd", "=", 
+   RowBox[{"Dot", "[", 
+    RowBox[{"normal", ",", 
+     RowBox[{"vectors2", "[", 
+      RowBox[{"[", "1", "]"}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"formula2", "=", 
+   RowBox[{"normal", "*", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y", ",", "1"}], "}"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"formula2", " ", "=", " ", 
+   RowBox[{"Plus", "@@", "formula2"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"formula2", "=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"formula2", "-", "dd"}], ")"}], "/", 
+    RowBox[{"-", "aa"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"F", "[", 
+    RowBox[{"x_", ",", "y_"}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Total", "[", 
+       RowBox[{"normal", "*", 
+        RowBox[{"{", 
+         RowBox[{"x", ",", "y", ",", "1"}], "}"}]}], "]"}], "-", "d"}], ")"}],
+     "/", 
+    RowBox[{"-", "aa"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"F2", "[", 
+    RowBox[{"x_", ",", "y_"}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Total", "[", 
+       RowBox[{"normal", "*", 
+        RowBox[{"{", 
+         RowBox[{"x", ",", "y", ",", "1"}], "}"}]}], "]"}], "-", "dd"}], 
+     ")"}], "/", 
+    RowBox[{"-", "aa"}]}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.546378078151469*^9, 3.546378081504587*^9}, {
+   3.5463781227510777`*^9, 3.5463781491318502`*^9}, {3.5464073827457867`*^9, 
+   3.546407419267552*^9}, {3.5464075560701*^9, 3.546407634084386*^9}, {
+   3.546407880313222*^9, 3.5464079088210173`*^9}, {3.5464081374927692`*^9, 
+   3.5464081745707912`*^9}, 3.546408308922483*^9, {3.546408343963573*^9, 
+   3.546408349078732*^9}, {3.546408497480236*^9, 3.5464085016833143`*^9}, {
+   3.546408638509604*^9, 3.546408643630198*^9}, {3.546409049733938*^9, 
+   3.546409049844974*^9}, {3.546409143264388*^9, 3.5464091435142736`*^9}, {
+   3.546416083517852*^9, 3.546416119536158*^9}, 3.5464230633356123`*^9, {
+   3.546423123918273*^9, 3.546423124345566*^9}, 3.546423174123246*^9, {
+   3.546423379160109*^9, 3.54642337962678*^9}, {3.546425114817831*^9, 
+   3.5464251151164217`*^9}, {3.5464450642962923`*^9, 3.546445065862495*^9}}],
+
+Cell["\<\
+Roviny si zobraz\[IAcute]me do p\[RHacek]edchoz\[IAcute]ho obr\[AAcute]zku.\
+\>", "Text",
+ CellChangeTimes->{{3.546445082084531*^9, 3.546445096502276*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"formula3", "=", 
+   RowBox[{"normal", "*", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y", ",", "1"}], "}"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"formula3", " ", "=", " ", 
+   RowBox[{"Plus", "@@", "formula3"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ddd", "=", 
+   RowBox[{"Dot", "[", 
+    RowBox[{"normal", ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0", ",", 
+       RowBox[{
+        RowBox[{"Abs", "[", 
+         RowBox[{
+          RowBox[{"F", "[", 
+           RowBox[{"0", ",", "0"}], "]"}], "-", 
+          RowBox[{"F2", "[", 
+           RowBox[{"0", ",", "0"}], "]"}]}], "]"}], "/", "2"}]}], "}"}]}], 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"formula3", "=", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"formula3", "-", "ddd"}], ")"}], "/", 
+     RowBox[{"-", "aa"}]}], ")"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"F3", "[", 
+    RowBox[{"x_", ",", "y_"}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Total", "[", 
+       RowBox[{"normal", "*", 
+        RowBox[{"{", 
+         RowBox[{"x", ",", "y", ",", "1"}], "}"}]}], "]"}], "-", "ddd"}], 
+     ")"}], "/", 
+    RowBox[{"-", "aa"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", 
+  RowBox[{
+   RowBox[{"ListPointPlot3D", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Extract", "[", 
+        RowBox[{"higherDim", ",", 
+         RowBox[{"Position", "[", 
+          RowBox[{"inputClasses", ",", "1"}], "]"}]}], "]"}], ",", 
+       RowBox[{"Extract", "[", 
+        RowBox[{"higherDim", ",", 
+         RowBox[{"Position", "[", 
+          RowBox[{"inputClasses", ",", 
+           RowBox[{"-", "1"}]}], "]"}]}], "]"}]}], "}"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"Red", ",", 
+          RowBox[{"PointSize", "[", "Medium", "]"}]}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"Green", ",", 
+          RowBox[{"PointSize", "[", "Medium", "]"}]}], "}"}]}], "}"}]}], ",", 
+     
+     RowBox[{"PlotRange", "\[Rule]", "All"}]}], "]"}], ",", 
+   "\[IndentingNewLine]", " ", 
+   RowBox[{"Plot3D", "[", 
+    RowBox[{"formula", ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", 
+       RowBox[{"-", "5.5"}], ",", "5.5"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"y", ",", 
+       RowBox[{"-", "5.5"}], ",", "5.5"}], "}"}], ",", 
+     RowBox[{"Mesh", "\[Rule]", "None"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"Opacity", "[", "0.2", "]"}]}], ",", 
+     RowBox[{"BoundaryStyle", "\[Rule]", 
+      RowBox[{"{", "Red", "}"}]}]}], "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"Plot3D", "[", 
+    RowBox[{"formula2", ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", 
+       RowBox[{"-", "5.5"}], ",", "5.5"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"y", ",", 
+       RowBox[{"-", "5.5"}], ",", "5.5"}], "}"}], ",", 
+     RowBox[{"Mesh", "\[Rule]", "None"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"Opacity", "[", "0.2", "]"}]}], ",", 
+     RowBox[{"BoundaryStyle", "\[Rule]", 
+      RowBox[{"{", "Green", "}"}]}]}], "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"Plot3D", "[", 
+    RowBox[{"formula3", ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", 
+       RowBox[{"-", "5.5"}], ",", "5.5"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"y", ",", 
+       RowBox[{"-", "5.5"}], ",", "5.5"}], "}"}], ",", 
+     RowBox[{"Mesh", "\[Rule]", "None"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"Opacity", "[", "0.4", "]"}]}], ",", 
+     RowBox[{"BoundaryStyle", "\[Rule]", 
+      RowBox[{"{", "Thick", "}"}]}]}], "]"}], ",", 
+   RowBox[{"ListPointPlot3D", "[", 
+    RowBox[{
+     RowBox[{"vectors", "[", 
+      RowBox[{"[", 
+       RowBox[{";;", "3"}], "]"}], "]"}], ",", " ", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"PointSize", "[", "0.020", "]"}], ",", 
+        RowBox[{"Hue", "[", "0.6", "]"}]}], "}"}]}]}], "]"}], ",", 
+   RowBox[{"ListPointPlot3D", "[", 
+    RowBox[{
+     RowBox[{"vectors2", "[", 
+      RowBox[{"[", 
+       RowBox[{";;", "1"}], "]"}], "]"}], ",", " ", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"PointSize", "[", "0.020", "]"}], ",", 
+        RowBox[{"Hue", "[", "0.6", "]"}]}], "}"}]}]}], "]"}], ",", 
+   RowBox[{"ViewPoint", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"15", ",", "6", ",", "4"}], "}"}]}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.546370425187628*^9, 3.546370479678721*^9}, 
+   3.546371005047537*^9, {3.546371329685637*^9, 3.5463713383856583`*^9}, {
+   3.546372139107782*^9, 3.5463721606350203`*^9}, {3.5463765423011*^9, 
+   3.546376542592404*^9}, {3.5464085376080847`*^9, 3.546408589641032*^9}, 
+   3.546409304547391*^9, {3.546409619390723*^9, 3.546409674338879*^9}, {
+   3.54641399960647*^9, 3.546414000568623*^9}, {3.546414382140222*^9, 
+   3.546414383749495*^9}, {3.5464152264352207`*^9, 3.5464152448112087`*^9}, {
+   3.546415302751459*^9, 3.5464153407052927`*^9}, {3.546415374923877*^9, 
+   3.5464153871945457`*^9}, {3.5464154267740088`*^9, 3.546415452014305*^9}, {
+   3.546415505637074*^9, 3.5464155690953207`*^9}, 3.5464156186514683`*^9, {
+   3.5464157522477627`*^9, 3.5464159581114073`*^9}, {3.546416165710147*^9, 
+   3.546416178807871*^9}, {3.546416244133491*^9, 3.546416277930093*^9}, {
+   3.546416326357497*^9, 3.5464164745481453`*^9}, {3.546421069880383*^9, 
+   3.5464210878212423`*^9}, {3.546422769584116*^9, 3.546422776266489*^9}, {
+   3.546425129097076*^9, 3.546425130730486*^9}, {3.546445339888607*^9, 
+   3.546445383879878*^9}}],
+
+Cell["\<\
+Sv\[EHacek]tlej\[SHacek]\[IAcute], barevn\[EHacek] or\[AAcute]movan\[EAcute] \
+roviny jsou op\[EHacek]rn\[EAcute] roviny jednotliv\[YAcute]ch t\[RHacek]\
+\[IAcute]d, \[CapitalCHacek]ern\[EHacek] or\[AAcute]movan\[AAcute], nejv\
+\[YAcute]razn\[EHacek]j\[SHacek]\[IAcute] rovina je rovina, pomoc\[IAcute] \
+kter\[EAcute] se prov\[AAcute]d\[IAcute] klasifikace. V grafu jsou tak\
+\[EAcute] zv\[YAcute]razn\[EHacek]ny op\[EHacek]rn\[EAcute] vektory modrou \
+barvou.\
+\>", "Text",
+ CellChangeTimes->{{3.546445253630372*^9, 3.546445282107357*^9}, {
+  3.546445402180764*^9, 3.5464455468636847`*^9}}],
+
+Cell["\<\
+V\[YAcute]slednou klasifikaci si m\[URing]\[ZHacek]eme p\[RHacek]ibl\[IAcute]\
+\[ZHacek]it n\[AAcute]sleduj\[IAcute]c\[IAcute]m grafem.\
+\>", "Text",
+ CellChangeTimes->{{3.546445578065316*^9, 3.54644558368822*^9}, {
+  3.546445690459903*^9, 3.546445699787981*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"range", "=", "10"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", 
+  RowBox[{
+   RowBox[{"Plot3D", "[", 
+    RowBox[{
+     RowBox[{"KernelPolynomial", "[", 
+      RowBox[{"x", ",", "z", ",", "1", ",", "polynomDegree"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", 
+       RowBox[{"-", "range"}], ",", "range"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"z", ",", 
+       RowBox[{"-", "range"}], ",", "range"}], "}"}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", "All"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"Opacity", "[", "0", "]"}]}], ",", 
+     RowBox[{"Mesh", "\[Rule]", "None"}], ",", 
+     RowBox[{"RegionFunction", "\[Rule]", 
+      RowBox[{"Function", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"x", ",", "y", ",", "z"}], "}"}], ",", 
+        RowBox[{"z", ">", 
+         RowBox[{"F", "[", 
+          RowBox[{"x", ",", "y"}], "]"}]}]}], "]"}]}], ",", 
+     RowBox[{"BoundaryStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"Dashing", "[", 
+        RowBox[{"{", 
+         RowBox[{".001", ",", ".001"}], "}"}], "]"}], "}"}]}]}], "]"}], ",", 
+   RowBox[{"Plot3D", "[", 
+    RowBox[{
+     RowBox[{"KernelPolynomial", "[", 
+      RowBox[{"x", ",", "z", ",", "1", ",", "polynomDegree"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", 
+       RowBox[{"-", "range"}], ",", "range"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"z", ",", 
+       RowBox[{"-", "range"}], ",", "range"}], "}"}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", "All"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"Opacity", "[", "0", "]"}]}], ",", 
+     RowBox[{"Mesh", "\[Rule]", "None"}], ",", 
+     RowBox[{"RegionFunction", "\[Rule]", 
+      RowBox[{"Function", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"x", ",", "y", ",", "z"}], "}"}], ",", 
+        RowBox[{"z", ">", 
+         RowBox[{"F2", "[", 
+          RowBox[{"x", ",", "y"}], "]"}]}]}], "]"}]}], ",", 
+     RowBox[{"BoundaryStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"Dashing", "[", 
+        RowBox[{"{", 
+         RowBox[{".001", ",", ".001"}], "}"}], "]"}], "}"}]}]}], "]"}], ",", 
+   RowBox[{"Plot3D", "[", 
+    RowBox[{
+     RowBox[{"KernelPolynomial", "[", 
+      RowBox[{"x", ",", "z", ",", "1", ",", "polynomDegree"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", 
+       RowBox[{"-", "range"}], ",", "range"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"z", ",", 
+       RowBox[{"-", "range"}], ",", "range"}], "}"}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", "All"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"Opacity", "[", "0", "]"}]}], ",", 
+     RowBox[{"Mesh", "\[Rule]", "None"}], ",", 
+     RowBox[{"RegionFunction", "\[Rule]", 
+      RowBox[{"Function", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"x", ",", "y", ",", "z"}], "}"}], ",", 
+        RowBox[{"z", ">", 
+         RowBox[{"F3", "[", 
+          RowBox[{"x", ",", "y"}], "]"}]}]}], "]"}]}], ",", 
+     RowBox[{"BoundaryStyle", "\[Rule]", 
+      RowBox[{"{", "Thick", "}"}]}]}], "]"}], ",", 
+   RowBox[{"ListPointPlot3D", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Extract", "[", 
+        RowBox[{"higherDim", ",", 
+         RowBox[{"Position", "[", 
+          RowBox[{"inputClasses", ",", "1"}], "]"}]}], "]"}], ",", 
+       RowBox[{"Extract", "[", 
+        RowBox[{"higherDim", ",", 
+         RowBox[{"Position", "[", 
+          RowBox[{"inputClasses", ",", 
+           RowBox[{"-", "1"}]}], "]"}]}], "]"}]}], "}"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"Red", ",", 
+          RowBox[{"PointSize", "[", "Medium", "]"}]}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"Green", ",", 
+          RowBox[{"PointSize", "[", "Medium", "]"}]}], "}"}]}], "}"}]}], ",", 
+     
+     RowBox[{"PlotRange", "\[Rule]", "All"}]}], "]"}], ",", 
+   RowBox[{"ListPointPlot3D", "[", 
+    RowBox[{
+     RowBox[{"vectors", "[", 
+      RowBox[{"[", 
+       RowBox[{";;", "3"}], "]"}], "]"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"Directive", "[", 
+       RowBox[{
+        RowBox[{"PointSize", "[", "Large", "]"}], ",", 
+        RowBox[{"Opacity", "[", "0.5", "]"}]}], "]"}]}]}], "]"}], ",", 
+   RowBox[{"ListPointPlot3D", "[", 
+    RowBox[{
+     RowBox[{"vectors2", "[", 
+      RowBox[{"[", 
+       RowBox[{";;", "1"}], "]"}], "]"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"Directive", "[", 
+       RowBox[{
+        RowBox[{"PointSize", "[", "Large", "]"}], ",", 
+        RowBox[{"Opacity", "[", "0.5", "]"}]}], "]"}]}]}], "]"}], ",", 
+   RowBox[{"ViewPoint", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"0", ",", "0", ",", "10"}], "}"}]}]}], "]"}]}], "Input",
+ CellChangeTimes->CompressedData["
+1:eJxTTMoPSmViYGAQBWIQPefApOe2Oa8c887+ewmi32v/fwuik2dMew+i/xkX
+3rMD8WtYH4DoFbXub0F0glc4mN4wV/EziD50P+s7iI5L+vEbRFtfOfsPrK5d
+jN0eSPN0uHCCaM2zHdHOQPqisFAuiJbKNagE0WdfmFSB6Am5v+pA9Kn6PfUg
+uuCDdjuY/9JqKohO+243D0S3hb6bD6LF0s4sBtENMsKrQXTN032bQXTGz64t
+ILpbjeUaiE7xMgfTQVKhgi5AWo25XgREXz94SxpEHwoQlgfRcsHXVED0nvnh
+WiD6VdptAxA96c0WRxB9RTrMC0Q38Wz2AdHX1CIDQXTpmjIwDQAYXaU/
+  "]],
+
+Cell["\<\
+Tlust\[AAcute] \[CHacek]ern\[AAcute] \[CHacek]\[AAcute]ra p\[RHacek]edstavuje \
+v\[YAcute]slednou klasifikaci a slab\[SHacek]\[IAcute] \[CHacek]\[AAcute]ry \
+zobrazuj\[IAcute] op\[EHacek]rn\[EAcute] roviny. Sv\[EHacek]tle mod\[RHacek]e \
+jsou zv\[YAcute]razn\[EHacek]ny op\[EHacek]rn\[EAcute] vektory.\
+\>", "Text",
+ CellChangeTimes->{{3.546445792689947*^9, 3.5464458835084887`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Pou\[ZHacek]it\[IAcute] SVM na re\[AAcute]ln\[YAcute]ch datech", \
+"Section",
+ CellChangeTimes->{{3.544878588855008*^9, 3.544878598116362*^9}, {
+  3.546446050825903*^9, 3.546446057319292*^9}}],
+
+Cell["\<\
+V posledn\[IAcute] \[CHacek]\[AAcute]sti si uk\[AAcute]\[ZHacek]eme pou\
+\[ZHacek]\[IAcute]t\[IAcute] SVM na re\[AAcute]ln\[YAcute]ch datech z datab\
+\[AAcute]ze UCI. K tomuto \[UAcute]\[CHacek]elu pou\[ZHacek]ijeme \
+zn\[AAcute]m\[AAcute] Iris data.\
+\>", "Text",
+ CellChangeTimes->{{3.544878603093927*^9, 3.5448786180805197`*^9}, {
+  3.5464459211056957`*^9, 3.5464459248805017`*^9}, {3.5464460251978493`*^9, 
+  3.546446078012344*^9}, {3.5464488183549023`*^9, 3.546448827459868*^9}}],
+
+Cell["\<\
+Nejprve si data na\[CHacek]teme. Pozor, je pot\[RHacek]eba p\[RHacek]ipojen\
+\[IAcute] k internetu.\
+\>", "Text",
+ CellChangeTimes->{{3.546446099899082*^9, 3.546446122694601*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data", "=", 
+   RowBox[{
+   "Import", "[", 
+    "\"\<http://ftp.ics.uci.edu/pub/machine-learning-databases/iris/iris.data\
+\>\"", "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.544878623977062*^9, 3.544878623980795*^9}, {
+  3.544878665139771*^9, 3.544878670969308*^9}}],
+
+Cell["\<\
+D\[AAcute]le provedeme jednoduch\[EAcute] p\[RHacek]edzpracov\[AAcute]n\
+\[IAcute] dat. Nejprve rozd\[EHacek]l\[IAcute]me data na vstupn\[IAcute] a v\
+\[YAcute]stupn\[IAcute] mno\[ZHacek]inu. V\[YAcute]stupn\[IAcute] \
+mno\[ZHacek]ina obsahuje textov\[EAcute] atributy, ty p\[RHacek]evedeme na \
+\[CHacek]\[IAcute]seln\[EAcute].\
+\>", "Text",
+ CellChangeTimes->{{3.5464461670993443`*^9, 3.54644625501159*^9}, {
+  3.546446334484417*^9, 3.546446339708467*^9}, {3.546446378867405*^9, 
+  3.546446389117337*^9}, {3.546448851917067*^9, 3.546448853171071*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"data2", "=", 
+   RowBox[{"Drop", "[", 
+    RowBox[{"data", ",", 
+     RowBox[{"-", "1"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"inData", "=", 
+    RowBox[{"data2", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", 
+       RowBox[{"1", ";;", "4"}]}], "]"}], "]"}]}], ";"}], 
+  RowBox[{"(*", 
+   RowBox[{"vstupn\[IAcute]", " ", "parametry"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"outDataTmp", "=", 
+   RowBox[{"data2", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", "5"}], "]"}], "]"}]}], ";", 
+  RowBox[{"(*", 
+   RowBox[{"v\[YAcute]stupn\[IAcute]", " ", "parametr"}], "*)"}], 
+  RowBox[{"outVal", "=", 
+   RowBox[{
+    RowBox[{"Tally", "[", "outDataTmp", "]"}], "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", "1"}], "]"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"encode", "=", 
+   RowBox[{"MapIndexed", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"#1", "\[Rule]", 
+       RowBox[{"Normal", "[", "#2", "]"}]}], "&"}], ",", "outVal"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"outData", "=", 
+   RowBox[{"Flatten", "[", 
+    RowBox[{
+     RowBox[{"Flatten", "[", "outDataTmp", "]"}], "/.", "encode"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Func", "[", 
+    RowBox[{"x_", ",", "y_"}], "]"}], ":=", " ", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"y", "\[Equal]", "x"}], ",", "1", ",", 
+     RowBox[{"-", "1"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"outDataC1", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Func", "[", 
+       RowBox[{"#", ",", "1"}], "]"}], "&"}], ",", "outData"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"outDataC2", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Func", "[", 
+       RowBox[{"#", ",", "2"}], "]"}], "&"}], ",", "outData"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"outDataC3", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Func", "[", 
+       RowBox[{"#", ",", "3"}], "]"}], "&"}], ",", "outData"}], "]"}]}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.544878683723592*^9, 3.544878683724472*^9}, {
+  3.54488631619932*^9, 3.544886348984634*^9}, {3.5448864048661118`*^9, 
+  3.544886443069973*^9}, {3.544886492805892*^9, 3.544886549751243*^9}, {
+  3.5448865953283787`*^9, 3.544886628639517*^9}, {3.5448868838675127`*^9, 
+  3.544886894692739*^9}, {3.544887112240747*^9, 3.5448871333104467`*^9}, {
+  3.544889475889792*^9, 3.544889477181323*^9}, {3.544890246575101*^9, 
+  3.5448902935903463`*^9}, {3.546446308909337*^9, 3.546446330937916*^9}}],
+
+Cell["\<\
+N\[IAcute]\[ZHacek]e jsou parametry pou\[ZHacek]it\[EAcute] pro klasifikaci. \
+Jejich zm\[EHacek]nou a n\[AAcute]sledn\[YAcute]m znovuvyhodnocen\[IAcute]m \
+bu\[NHacek]ky, ve kter\[EAcute] se prov\[AAcute]d\[IAcute] klasifikace je mo\
+\[ZHacek]n\[EAcute] prov\[AAcute]d\[EHacek]t jednoduch\[EAcute] experimenty.\
+\>", "Text",
+ CellChangeTimes->{{3.54644642261131*^9, 3.546446528758906*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"PolDegree", "=", "10"}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "stupen", " ", "polynomu", " ", "pro", " ", "polynomi\[AAcute]ln\[IAcute]",
+     " ", "kernel"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"RBFParam", " ", "=", " ", "0.001"}], ";"}], 
+  RowBox[{"(*", 
+   RowBox[{"t", " ", "parametr", " ", "RBF", " ", "kernelu"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"error", "=", "0.8"}], ";"}], 
+  RowBox[{"(*", 
+   RowBox[{"ohodnoceni", " ", "chyby"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"precision", "=", "0.01"}], ";", " ", 
+  RowBox[{"(*", "presnost", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"PolKer", " ", "=", " ", 
+   RowBox[{
+    RowBox[{"PolynomialKernel", "[", 
+     RowBox[{"#1", ",", "#2", ",", "PolDegree"}], "]"}], "&"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RBFKer", "=", 
+   RowBox[{
+    RowBox[{"RBFKernel", "[", 
+     RowBox[{"#1", ",", "#2", ",", "RBFParam"}], "]"}], "&"}]}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.544890936069724*^9, 3.544890971373419*^9}, {
+   3.544893300309843*^9, 3.544893301416706*^9}, {3.546425269648684*^9, 
+   3.546425270028466*^9}, {3.5464290767800303`*^9, 3.5464291150354357`*^9}, {
+   3.546429206817881*^9, 3.546429222802919*^9}, 3.5464293028138113`*^9, {
+   3.5464293500866127`*^9, 3.546429401573308*^9}, {3.5464465333908167`*^9, 
+   3.546446656386552*^9}}],
+
+Cell["\<\
+SVM v z\[AAcute]kladn\[IAcute] podob\[EHacek] um\[IAcute] klasifikovat pouze \
+do dvou t\[RHacek]\[IAcute]d. Proto\[ZHacek]e na\[SHacek]e data obsahuj\
+\[IAcute] t\[RHacek]i t\[RHacek]\[IAcute]dy, mus\[IAcute]me pou\[ZHacek]\
+\[IAcute]t men\[SHacek]\[IAcute] okliku.
+Nejsna\[ZHacek]\[SHacek]i je zobecn\[EHacek]n\[IAcute] dat na dv\[EHacek] t\
+\[RHacek]\[IAcute]dy n\[AAcute]sleduj\[IAcute]c\[IAcute]m zp\[URing]sobem. \
+Vybereme jednu t\[RHacek]\[IAcute]du, tu nech\[AAcute]me beze zm\[EHacek]ny a \
+zbyl\[EAcute] dv\[EHacek] t\[RHacek]\[IAcute]dy slou\[CHacek]\[IAcute]me do \
+jedn\[EAcute] (1 vs. others). Takto budedme postupovat pro v\[SHacek]echny t\
+\[RHacek]\[IAcute]dy. V na\[SHacek]em p\[RHacek]\[IAcute]pad\[EHacek] z\
+\[IAcute]sk\[AAcute]me 3 datasety. Na ka\[ZHacek]d\[EAcute]m datasetu natr\
+\[EAcute]nujeme jeden SVM model.\
+\>", "Text",
+ CellChangeTimes->{{3.544887159569117*^9, 3.544887226916153*^9}, {
+  3.544887315077093*^9, 3.54488743544312*^9}, {3.5448875104625273`*^9, 
+  3.544887518718727*^9}, {3.546446705963109*^9, 3.546446824328238*^9}, {
+  3.546446857402321*^9, 3.5464470260691547`*^9}, {3.546447067070527*^9, 
+  3.546447080267872*^9}, {3.5464471212338877`*^9, 3.546447140629757*^9}, {
+  3.546447178031321*^9, 3.546447193078953*^9}, {3.546448894503826*^9, 
+  3.546448896825439*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"l", "=", 
+   RowBox[{"NonseparableSVM", "[", 
+    RowBox[{"inData", ",", "outDataC1", ",", "error", ",", "precision", ",", 
+     RowBox[{"KernelFunction", "\[Rule]", "RBFKer"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"out1", "=", 
+   RowBox[{"Rescale", "[", 
+    RowBox[{"inData", ".", 
+     RowBox[{"WeightVector", "[", 
+      RowBox[{"l", ",", "inData", ",", "outDataC1"}], "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", "out1", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ll", "=", 
+   RowBox[{"NonseparableSVM", "[", 
+    RowBox[{"inData", ",", "outDataC2", ",", "error", ",", "precision", ",", 
+     RowBox[{"KernelFunction", "\[Rule]", "RBFKer"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"out2", "=", 
+   RowBox[{"Rescale", "[", 
+    RowBox[{"inData", ".", 
+     RowBox[{"WeightVector", "[", 
+      RowBox[{"ll", ",", "inData", ",", "outDataC2"}], "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", "out2", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"lll", "=", 
+   RowBox[{"NonseparableSVM", "[", 
+    RowBox[{
+    "inData", ",", "outDataC3", ",", "error", ",", "precision", ",", " ", 
+     RowBox[{"KernelFunction", "\[Rule]", "RBFKer"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"out3", "=", 
+   RowBox[{"Rescale", "[", 
+    RowBox[{"inData", ".", 
+     RowBox[{"WeightVector", "[", 
+      RowBox[{"lll", ",", "inData", ",", "outDataC3"}], "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", "out3", "]"}]}], "Input",
+ CellChangeTimes->{{3.544888299054172*^9, 3.544888312088793*^9}, {
+   3.54488889766706*^9, 3.5448889046035967`*^9}, 3.544889356554905*^9, {
+   3.544889461678941*^9, 3.544889552364863*^9}, {3.544889601142828*^9, 
+   3.544889610573133*^9}, {3.5448898888379393`*^9, 3.5448898996672077`*^9}, {
+   3.544889939406253*^9, 3.544890023739668*^9}, {3.544890315185033*^9, 
+   3.5448903175294647`*^9}, 3.544890440101029*^9, 3.544890626445314*^9, {
+   3.5448907262373543`*^9, 3.54489073264132*^9}, {3.5448907788080463`*^9, 
+   3.5448907789902897`*^9}, {3.544890857143976*^9, 3.544890858019793*^9}, {
+   3.5448911050184593`*^9, 3.544891108076816*^9}, {3.5448914375771713`*^9, 
+   3.544891450748601*^9}, {3.544891649011498*^9, 3.544891649508506*^9}, {
+   3.544892547865568*^9, 3.544892553268364*^9}, {3.5448927198653803`*^9, 
+   3.544892752177287*^9}, {3.5448929577813473`*^9, 3.5448929625515003`*^9}, {
+   3.5448935686476192`*^9, 3.544893569797762*^9}, {3.54489471047014*^9, 
+   3.544894728969942*^9}, {3.544895023236355*^9, 3.544895037243247*^9}, {
+   3.544895211994302*^9, 3.5448952132812138`*^9}, {3.544895519645406*^9, 
+   3.5448955235463877`*^9}, {3.5448955903687677`*^9, 
+   3.5448955914021053`*^9}, {3.544895764790126*^9, 3.5448957650104837`*^9}, {
+   3.544895797573505*^9, 3.544895798833413*^9}, {3.544896271319832*^9, 
+   3.54489627162129*^9}, {3.546425297634832*^9, 3.5464253224915047`*^9}, {
+   3.546429371543429*^9, 3.546429373694996*^9}, {3.5464294050337963`*^9, 
+   3.5464294073329897`*^9}, {3.546429461743589*^9, 3.54642946826648*^9}}],
+
+Cell["\<\
+V\[YAcute]stupem jsou t\[RHacek]i grafy. Prvn\[IAcute] graf ud\[AAcute]v\
+\[AAcute] klasifikaci do prvn\[IAcute] t\[RHacek]\[IAcute]dy, druh\[YAcute] \
+graf do druh\[EAcute] t\[RHacek]\[IAcute]dy a t\[RHacek]et\[IAcute] graf do t\
+\[RHacek]et\[IAcute] t\[RHacek]\[IAcute]dy. V\[YAcute]slednou klasifikaci ur\
+\[CHacek]\[IAcute]me tak, \[ZHacek]e jako v\[YAcute]stupn\[IAcute] t\[RHacek]\
+\[IAcute]du bereme tu t\[RHacek]\[IAcute]du, jej\[IAcute]\[ZHacek] model \
+dosahuje nejvy\[SHacek]\[SHacek]\[IAcute]ho v\[YAcute]stupu.\
+\>", "Text",
+ CellChangeTimes->{{3.544896427345635*^9, 3.544896476385309*^9}, {
+  3.5448965080066957`*^9, 3.5448965476354856`*^9}, {3.546447206763453*^9, 
+  3.54644738678582*^9}}],
+
+Cell["\<\
+Zavedene fuknce, pomoc\[IAcute] kter\[YAcute]ch porovn\[AAcute]me \
+v\[YAcute]stupy jednotliv\[YAcute]ch model\[URing].\
+\>", "Text",
+ CellChangeTimes->{{3.546447429384081*^9, 3.546447449928546*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"MyCompare", "[", 
+    RowBox[{"a_", ",", "b_", ",", "c_"}], "]"}], ":=", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"a", ">=", "b"}], "&&", 
+      RowBox[{"a", "\[GreaterEqual]", "c"}]}], ",", "1", ",", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"b", "\[GreaterEqual]", "a"}], "&&", 
+        RowBox[{"b", "\[GreaterEqual]", "c"}]}], ",", "2", ",", "3"}], 
+      "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MyCorrect", "[", 
+    RowBox[{"a_", ",", "b_"}], "]"}], ":=", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"a", "\[Equal]", "b"}], ",", "1", ",", "0"}], "]"}]}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.5464255488808813`*^9, 3.5464255769863234`*^9}, {
+  3.546425618116425*^9, 3.5464256664911213`*^9}, {3.546425712001959*^9, 
+  3.5464257304577513`*^9}, {3.546425760492052*^9, 3.546425771941017*^9}, {
+  3.546425812052718*^9, 3.5464258774163227`*^9}, {3.546428299300621*^9, 
+  3.546428365016778*^9}}],
+
+Cell["\<\
+A zobraz\[IAcute]me si v\[YAcute]slednou klasifikaci.\
+\>", "Text",
+ CellChangeTimes->{{3.546447480291574*^9, 3.546447491753956*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"out", "=", 
+   RowBox[{"{", "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"For", "[", 
+   RowBox[{
+    RowBox[{"i", "=", "1"}], ",", 
+    RowBox[{"i", "\[LessEqual]", 
+     RowBox[{
+      RowBox[{"Dimensions", "[", "out3", "]"}], "[", 
+      RowBox[{"[", "1", "]"}], "]"}]}], ",", 
+    RowBox[{"i", "++"}], ",", "\[IndentingNewLine]", 
+    RowBox[{"AppendTo", "[", 
+     RowBox[{"out", ",", 
+      RowBox[{"MyCompare", "[", 
+       RowBox[{
+        RowBox[{"out1", "[", 
+         RowBox[{"[", "i", "]"}], "]"}], ",", 
+        RowBox[{"out2", "[", 
+         RowBox[{"[", "i", "]"}], "]"}], ",", 
+        RowBox[{"out3", "[", 
+         RowBox[{"[", "i", "]"}], "]"}]}], "]"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ListPlot", "[", "out", "]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.546425885678398*^9, 3.546426113107492*^9}, {
+   3.5464261547302513`*^9, 3.546426250415319*^9}, {3.5464263008548937`*^9, 
+   3.5464263762471046`*^9}, {3.546426482651147*^9, 3.546426517600172*^9}, 
+   3.546426936705573*^9, {3.546447474944272*^9, 3.546447475110359*^9}}],
+
+Cell["\<\
+Pro porovn\[AAcute]m\[IAcute] si zobraz\[IAcute]me je\[SHacek]t\[EHacek] spr\
+\[AAcute]vn\[YAcute] v\[YAcute]stup.\
+\>", "Text",
+ CellChangeTimes->{{3.546447516319029*^9, 3.5464475371000338`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ListPlot", "[", "outData", "]"}]], "Input",
+ CellChangeTimes->{{3.5464267512492933`*^9, 3.546426758080554*^9}, {
+   3.546426874293521*^9, 3.546426874916606*^9}, {3.546427149806885*^9, 
+   3.5464272272129173`*^9}, {3.546447414890955*^9, 3.5464474156164303`*^9}, 
+   3.5464474723188*^9, 3.5464475126560173`*^9}],
+
+Cell["\<\
+\[CapitalUAcute]sp\[EHacek]\[SHacek]nost klasifikace si \
+vyj\[AAcute]d\[RHacek]\[IAcute]me je\[SHacek]t\[EHacek] v procentech.\
+\>", "Text",
+ CellChangeTimes->{{3.5464281924783154`*^9, 3.5464282008775787`*^9}, {
+  3.546447624724372*^9, 3.54644763856715*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"correct", "=", "0"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{" ", 
+  RowBox[{
+   RowBox[{"For", "[", 
+    RowBox[{
+     RowBox[{"i", "=", "1"}], ",", 
+     RowBox[{"i", "\[LessEqual]", 
+      RowBox[{
+       RowBox[{"Dimensions", "[", "out3", "]"}], "[", 
+       RowBox[{"[", "1", "]"}], "]"}]}], ",", 
+     RowBox[{"i", "++"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"correct", "+=", 
+       RowBox[{"MyCorrect", "[", 
+        RowBox[{
+         RowBox[{"out", "[", 
+          RowBox[{"[", "i", "]"}], "]"}], ",", 
+         RowBox[{"outData", "[", 
+          RowBox[{"[", "i", "]"}], "]"}]}], "]"}]}], ";"}]}], 
+    "\[IndentingNewLine]", "]"}], ";"}]}], "\[IndentingNewLine]", 
+ RowBox[{"N", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"correct", "/", 
+     RowBox[{
+      RowBox[{"Dimensions", "[", "outData", "]"}], "[", 
+      RowBox[{"[", "1", "]"}], "]"}]}], "*", "100"}], ",", "5"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.54642823162145*^9, 3.546428242157419*^9}, {
+  3.54642838352372*^9, 3.546428494053668*^9}, {3.5464285348360653`*^9, 
+  3.546428604862384*^9}, {3.546428706488057*^9, 3.546428742825591*^9}}]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{826, 672},
+WindowMargins->{{Automatic, 73}, {Automatic, 26}},
+PrintingCopies->1,
+PrintingPageRange->{Automatic, Automatic},
+PrintingOptions->{"PaperOrientation"->"Portrait",
+"PaperSize"->{594.75, 842.25},
+"PostScriptOutputFile"->"/home/adam/demonstrace.pdf"},
+FrontEndVersion->"8.0 for Linux x86 (64-bit) (February 23, 2011)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[422, 15, 162, 2, 88, "Title"],
+Cell[587, 19, 215, 4, 54, "Subtitle"],
+Cell[CellGroupData[{
+Cell[827, 27, 137, 1, 74, "Section"],
+Cell[967, 30, 163, 3, 30, "Text"],
+Cell[1133, 35, 641, 14, 69, "Input"],
+Cell[1777, 51, 185, 4, 30, "Text"],
+Cell[1965, 57, 5629, 146, 316, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7631, 208, 151, 3, 74, "Section"],
+Cell[7785, 213, 285, 6, 30, "Text"],
+Cell[8073, 221, 1272, 40, 88, "Input"],
+Cell[9348, 263, 148, 3, 30, "Text"],
+Cell[9499, 268, 693, 19, 50, "Input"],
+Cell[10195, 289, 537, 8, 49, "Text"],
+Cell[10735, 299, 559, 13, 69, "Input"],
+Cell[11297, 314, 1116, 17, 68, "Text"],
+Cell[12416, 333, 176, 4, 30, "Text"],
+Cell[12595, 339, 2156, 61, 126, "Input"],
+Cell[14754, 402, 911, 14, 68, "Text"],
+Cell[15668, 418, 185, 4, 30, "Text"],
+Cell[15856, 424, 733, 14, 50, "Input"],
+Cell[16592, 440, 581, 9, 68, "Text"],
+Cell[17176, 451, 1020, 22, 69, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18233, 478, 117, 1, 74, "Section"],
+Cell[18353, 481, 699, 11, 49, "Text"],
+Cell[19055, 494, 241, 5, 30, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[19333, 504, 138, 1, 66, "Section"],
+Cell[19474, 507, 1183, 31, 49, "Text"],
+Cell[20660, 540, 279, 5, 30, "Text"],
+Cell[20942, 547, 1231, 30, 69, "Input"],
+Cell[22176, 579, 769, 12, 68, "Text"],
+Cell[22948, 593, 2082, 39, 88, "Input"],
+Cell[25033, 634, 556, 9, 49, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[25626, 648, 129, 1, 66, "Section"],
+Cell[25758, 651, 992, 25, 53, "Text"],
+Cell[26753, 678, 283, 5, 30, "Text"],
+Cell[27039, 685, 1200, 29, 69, "Input"],
+Cell[28242, 716, 374, 7, 49, "Text"],
+Cell[28619, 725, 159, 3, 30, "Text"],
+Cell[28781, 730, 1283, 28, 88, "Input"],
+Cell[30067, 760, 508, 8, 49, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[30612, 773, 210, 4, 74, "Section"],
+Cell[30825, 779, 207, 4, 30, "Text"],
+Cell[31035, 785, 178, 4, 30, "Text"],
+Cell[31216, 791, 6329, 164, 316, "Input"],
+Cell[37548, 957, 412, 7, 30, "Text"],
+Cell[37963, 966, 269, 5, 30, "Text"],
+Cell[38235, 973, 2160, 63, 145, "Input"],
+Cell[40398, 1038, 168, 4, 30, "Text"],
+Cell[40569, 1044, 2823, 63, 145, "Input"],
+Cell[43395, 1109, 573, 9, 49, "Text"],
+Cell[43971, 1120, 229, 5, 30, "Text"],
+Cell[44203, 1127, 7810, 218, 563, "Input"],
+Cell[52016, 1347, 165, 3, 30, "Text"],
+Cell[52184, 1352, 5699, 148, 354, "Input"],
+Cell[57886, 1502, 602, 10, 49, "Text"],
+Cell[58491, 1514, 273, 5, 30, "Text"],
+Cell[58767, 1521, 5223, 137, 373, "Input"],
+Cell[63993, 1660, 393, 6, 49, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[64423, 1671, 198, 3, 74, "Section"],
+Cell[64624, 1676, 494, 8, 30, "Text"],
+Cell[65121, 1686, 189, 4, 30, "Text"],
+Cell[65313, 1692, 305, 8, 50, "Input"],
+Cell[65621, 1702, 563, 9, 49, "Text"],
+Cell[66187, 1713, 2659, 80, 202, "Input"],
+Cell[68849, 1795, 400, 6, 49, "Text"],
+Cell[69252, 1803, 1464, 38, 126, "Input"],
+Cell[70719, 1843, 1319, 20, 87, "Text"],
+Cell[72041, 1865, 3174, 64, 183, "Input"],
+Cell[75218, 1931, 714, 11, 49, "Text"],
+Cell[75935, 1944, 209, 4, 30, "Text"],
+Cell[76147, 1950, 1049, 28, 50, "Input"],
+Cell[77199, 1980, 143, 3, 30, "Text"],
+Cell[77345, 1985, 1164, 28, 126, "Input"],
+Cell[78512, 2015, 206, 4, 30, "Text"],
+Cell[78721, 2021, 333, 5, 30, "Input"],
+Cell[79057, 2028, 269, 5, 30, "Text"],
+Cell[79329, 2035, 1173, 32, 107, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
